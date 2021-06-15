@@ -55,3 +55,8 @@ traces. `sevctl`'s error messages should be human-readable.
 
 **The test suite passes if there are no *failed* test cases.** It is okay
 if there are skipped test cases.
+
+As mentioned above, this test suite is secondary to the `sev` library's
+automated unit test suite, which is much more comprehensive and covers
+all of the code that `sevctl` invokes that this test suite is unable to
+cover.
