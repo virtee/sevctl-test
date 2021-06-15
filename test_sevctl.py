@@ -53,19 +53,19 @@ def dev_sev():
 
 def test_sevctl_export_emits_error_during_network_failure(sevctl_bin, unshare_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("sevctl will be unable to open /dev/sev to perform this test")
+        pytest.skip("unable to open /dev/sev")
     res = subprocess.run([unshare_bin, "-r", "-n", sevctl_bin, 'export', 'test.file'])
     assert res.returncode != 0
 
 def test_sevctl_export_fails_on_hardware_without_sev_capability(sevctl_bin, dev_sev_r):
     if dev_sev_r:
-        pytest.skip("/dev/sev exists which suggests this machine is capable of SEV")
+        pytest.skip("/dev/sev is accessible but for this test it must not be")
     res = subprocess.run([sevctl_bin, "export", "test_file"])
     assert res.returncode != 0
 
 def test_sevctl_export_full_chain_creates_file_at_specified_location(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     with tempfile.NamedTemporaryFile() as fname:
         res = subprocess.run([sevctl_bin, "export", "--full", str(fname)])
@@ -76,7 +76,7 @@ def test_sevctl_export_full_chain_creates_file_at_specified_location(sevctl_bin,
 
 def test_sevctl_export_sev_chain_creates_file_at_specified_location(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     with tempfile.NamedTemporaryFile() as fname:
         res = subprocess.run([sevctl_bin, "export", str(fname)])
@@ -87,7 +87,7 @@ def test_sevctl_export_sev_chain_creates_file_at_specified_location(sevctl_bin, 
 
 def test_sevctl_export_full_chain_fails_if_permissions_are_incorrect(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     with tempfile.TemporaryDirectory() as tdir:
         fname = f"{tdir}/full-chain"
@@ -98,7 +98,7 @@ def test_sevctl_export_full_chain_fails_if_permissions_are_incorrect(sevctl_bin,
 
 def test_sevctl_export_chain_fails_if_permissions_are_incorrect(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     with tempfile.TemporaryDirectory() as tdir:
         fname = f"{tdir}/chain"
@@ -112,7 +112,7 @@ def test_sevctl_generate_ok(sevctl_bin, dev_sev_r):
 
 def test_sevctl_generate_fails_if_perms_are_bad_for_cert(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     with tempfile.TemporaryDirectory() as tdir:
         eperm = os.mkdir(f"{tdir}/eperm", 0o577)
@@ -126,7 +126,7 @@ def test_sevctl_generate_fails_if_perms_are_bad_for_cert(sevctl_bin, dev_sev_r):
 
 def test_sevctl_generate_fails_if_perms_are_bad_for_key(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     with tempfile.TemporaryDirectory() as tdir:
         eperm = os.mkdir(f"{tdir}/eperm", 0o577)
@@ -139,35 +139,35 @@ def test_sevctl_generate_fails_if_perms_are_bad_for_key(sevctl_bin, dev_sev_r):
 
 def test_sevctl_reset_on_sev_hardware(sevctl_bin, dev_sev_w):
     if not dev_sev_w:
-        pytest.skip("test does not have write access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("does not have write-access to /dev/sev")
 
     res = subprocess.run([sevctl_bin, "reset"])
     assert res.returncode == 0
 
 def test_sevctl_reset_on_non_sev_hardware(sevctl_bin, dev_sev_w, dev_sev_r):
     if dev_sev_w or dev_sev_r:
-        pytest.skip("test has access to /dev/sev, this should be ran on a non-SEV machine")
+        pytest.skip("/dev/sev is accessible but for this test it must not be")
 
     res = subprocess.run([sevctl_bin, "reset"])
     assert res.returncode != 0
 
 def test_sevctl_rotate_on_sev_capable_hardware(sevctl_bin, dev_sev_w):
     if not dev_sev_w:
-        pytest.skip("test does not have write access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("does not have write-access to /dev/sev")
 
     res = subprocess.run([sevctl_bin, "rotate"])
     assert res.returncode == 0
 
 def test_sevctl_rotate_on_non_sev_hardware(sevctl_bin, dev_sev_w, dev_sev_r):
     if dev_sev_w or dev_sev_r:
-        pytest.skip("test has access to /dev/sev, this should be ran on a non-SEV machine")
+        pytest.skip("/dev/sev is accessible but for this test it must not be")
 
     res = subprocess.run([sevctl_bin, "rotate"])
     assert res.returncode != 0
 
 def test_sevctl_show_fails_on_non_sev_hardware(sevctl_bin, dev_sev_r):
     if dev_sev_r:
-        pytest.skip("test has access to /dev/sev, this should be ran on a non-SEV machine")
+        pytest.skip("/dev/sev is accessible but for this test it must not be")
 
     res = subprocess.run([sevctl_bin, "show", "guests"])
     assert res.returncode != 0
@@ -177,7 +177,7 @@ def test_sevctl_show_fails_on_non_sev_hardware(sevctl_bin, dev_sev_r):
 
 def test_sevctl_show_exits_cleanly_on_sev_hardware(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     res = subprocess.run([sevctl_bin, "show", "guests"])
     assert res.returncode == 0
@@ -191,7 +191,7 @@ def test_sevctl_verify_sev_file_does_not_exist(sevctl_bin):
 
 def test_sevctl_verify_other_certs_dont_exist(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     res = subprocess.run([sevctl_bin, "verify", "--oca", "does-not-exist"])
     assert res.returncode != 0
@@ -201,7 +201,7 @@ def test_sevctl_verify_other_certs_dont_exist(sevctl_bin, dev_sev_r):
 
 def test_sevctl_verify_invalid_certs(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     res = subprocess.run([sevctl_bin, "verify", "--sev", "sev-bad.chain"])
     assert res.returncode != 0
@@ -211,7 +211,7 @@ def test_sevctl_verify_invalid_certs(sevctl_bin, dev_sev_r):
 
 def test_sevctl_verify_eperm(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("test does not have access to /dev/sev, sevctl will spuriously fail")
+        pytest.skip("unable to open /dev/sev")
 
     with tempfile.TemporaryDirectory() as tdir:
         sevf = f"{tdir}/sev.chain"
@@ -229,12 +229,12 @@ def test_sevctl_verify_eperm(sevctl_bin, dev_sev_r):
 
 def test_sevctl_verify_emits_error_during_network_failure(sevctl_bin, unshare_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("sevctl will be unable to open /dev/sev to perform this test")
+        pytest.skip("unable to open /dev/sev")
     res = subprocess.run([unshare_bin, "-r", "-n", sevctl_bin, "verify"])
     assert res.returncode != 0
 
 def test_sevctl_verify_ok(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
-        pytest.skip("sevctl will be unable to open /dev/sev to perform this test")
+        pytest.skip("unable to open /dev/sev")
     res = subprocess.run([sevctl_bin, "verify"])
     assert res.returncode == 0
