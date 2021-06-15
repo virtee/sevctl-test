@@ -112,7 +112,17 @@ def test_sevctl_export_chain_fails_if_permissions_are_incorrect(sevctl_bin, dev_
         assert not os.path.exists(fname)
 
 def test_sevctl_generate_ok(sevctl_bin, dev_sev_r):
-    pytest.skip("TODO")
+    if not dev_sev_r:
+        pytest.skip("unable to open /dev/sev")
+
+        with tempfile.TemporaryDirectory() as tdir:
+            cert = f"{tdir}/cert"
+            key = f"{tdir}/key"
+
+            res = subprocess.run([sevctl_bin, "generate", cert, key])
+            assert res.returncode == 0
+            assert os.path.exists(cert)
+            assert os.path.exists(key)
 
 def test_sevctl_generate_fails_if_perms_are_bad_for_cert(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
