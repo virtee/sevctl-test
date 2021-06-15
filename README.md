@@ -44,3 +44,14 @@ It is recommended to run the test suite on:
 1. A machine without SEV capabilities
 2. A machine with a 2nd generation EPYC processor.
 3. A machine with a 1st generation EPYC processor.
+
+`pytest` will capture and emit `sevctl`'s error messages. Many of these tests
+are meant to provoke `sevctl` into emitting an error. The test will not parse
+the error messages; it will only check that `sevctl` did not exit with a
+successful error code.
+
+In these cases, just scan the output and make sure there are no stack
+traces. `sevctl`'s error messages should be human-readable.
+
+**The test suite passes if there are no *failed* test cases.** It is okay
+if there are skipped test cases.
