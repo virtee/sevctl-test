@@ -216,7 +216,7 @@ def test_sevctl_verify_eperm(sevctl_bin, dev_sev_r):
     with tempfile.TemporaryDirectory() as tdir:
         sevf = f"{tdir}/sev.chain"
         shutil.copyfile("sev-good.chain", sevf)
-        os.chmod(sevf, 0o577)
+        os.chmod(sevf, 0o277)
 
         res = subprocess.run([sevctl_bin, "verify", "--sev", sevf])
         assert res.returncode != 0
