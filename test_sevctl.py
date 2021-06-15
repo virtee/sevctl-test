@@ -197,10 +197,10 @@ def test_sevctl_verify_other_certs_dont_exist(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
 
-    res = subprocess.run([sevctl_bin, "verify", "--oca", "does-not-exist"])
+    res = subprocess.run([sevctl_bin, "verify", "--sev", "sev-good.chain", "--oca", "does-not-exist"])
     assert res.returncode != 0
 
-    res = subprocess.run([sevctl_bin, "verify", "--ca", "does-not-exist"])
+    res = subprocess.run([sevctl_bin, "verify", "--sev", "sev-good.chain", "--ca", "does-not-exist"])
     assert res.returncode != 0
 
 def test_sevctl_verify_invalid_certs(sevctl_bin, dev_sev_r):
