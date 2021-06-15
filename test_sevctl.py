@@ -63,6 +63,7 @@ def test_sevctl_export_fails_on_hardware_without_sev_capability(sevctl_bin, dev_
     res = subprocess.run([sevctl_bin, "export", "test_file"])
     assert res.returncode != 0
 
+@pytest.mark.skip(reason="AMD key server rate-limits test suite; adding backoff upstream: https://github.com/enarx/sevctl/issues/30")
 def test_sevctl_export_full_chain_creates_file_at_specified_location(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
@@ -74,6 +75,7 @@ def test_sevctl_export_full_chain_creates_file_at_specified_location(sevctl_bin,
         st = os.stat(str(fname))
         assert st.st_size != 0
 
+@pytest.mark.skip(reason="AMD key server rate-limits test suite; adding backoff upstream: https://github.com/enarx/sevctl/issues/30")
 def test_sevctl_export_sev_chain_creates_file_at_specified_location(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
@@ -85,6 +87,7 @@ def test_sevctl_export_sev_chain_creates_file_at_specified_location(sevctl_bin, 
         st = os.stat(str(fname))
         assert st.st_size != 0
 
+@pytest.mark.skip(reason="AMD key server rate-limits test suite; adding backoff upstream: https://github.com/enarx/sevctl/issues/30")
 def test_sevctl_export_full_chain_fails_if_permissions_are_incorrect(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
@@ -96,6 +99,7 @@ def test_sevctl_export_full_chain_fails_if_permissions_are_incorrect(sevctl_bin,
         assert res.returncode != 0
         assert not os.path.exists(fname)
 
+@pytest.mark.skip(reason="AMD key server rate-limits test suite; adding backoff upstream: https://github.com/enarx/sevctl/issues/30")
 def test_sevctl_export_chain_fails_if_permissions_are_incorrect(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
@@ -233,6 +237,7 @@ def test_sevctl_verify_emits_error_during_network_failure(sevctl_bin, unshare_bi
     res = subprocess.run([unshare_bin, "-r", "-n", sevctl_bin, "verify"])
     assert res.returncode != 0
 
+@pytest.mark.skip(reason="AMD key server rate-limits test suite; adding backoff upstream: https://github.com/enarx/sevctl/issues/30")
 def test_sevctl_verify_ok(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
