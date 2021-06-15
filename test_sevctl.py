@@ -68,7 +68,8 @@ def test_sevctl_export_full_chain_creates_file_at_specified_location(sevctl_bin,
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
 
-    with tempfile.NamedTemporaryFile() as fname:
+    with tempfile.TemporaryDirectory() as tdir:
+        fname = f"{tdir}/chain"
         res = subprocess.run([sevctl_bin, "export", "--full", str(fname)])
         assert res.returncode == 0
 
@@ -80,7 +81,8 @@ def test_sevctl_export_sev_chain_creates_file_at_specified_location(sevctl_bin, 
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
 
-    with tempfile.NamedTemporaryFile() as fname:
+    with tempfile.TemporaryDirectory() as tdir:
+        fname = f"{tdir}/chain"
         res = subprocess.run([sevctl_bin, "export", str(fname)])
         assert res.returncode == 0
 
