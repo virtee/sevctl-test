@@ -228,7 +228,7 @@ def test_sevctl_verify_invalid_certs(sevctl_bin, dev_sev_r):
 def test_sevctl_verify_eperm(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
-
+ 
     with tempfile.TemporaryDirectory() as tdir:
         sevf = f"{tdir}/sev.chain"
         shutil.copyfile("sev-good.chain", sevf)
@@ -254,4 +254,13 @@ def test_sevctl_verify_ok(sevctl_bin, dev_sev_r):
     if not dev_sev_r:
         pytest.skip("unable to open /dev/sev")
     res = subprocess.run([sevctl_bin, "verify"])
+    assert res.returncode == 0
+
+def test_sevctl_ok_ok(sevctl_bin, dev_sev_r, dev_sev_w):
+    if not dev_sev_r:
+        pytest.skip("unable to open /dev/sev for reading")
+    if not dev_sev_w:
+        pytest.skip("unable to open /dev/sev for writing")
+
+    res = subprocess.run([sevctl_bin, "ok"])
     assert res.returncode == 0
