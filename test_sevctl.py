@@ -274,3 +274,8 @@ def test_sevctl_session_ok(sevctl_bin, dev_sev_r):
     files = ["vm_godh.b64", "vm_session.b64", "vm_tek.bin", "vm_tik.bin"]
     for f in files:
         os.remove(f)
+
+    bad_pdhf = f"sev-bad.chain"
+
+    res = subprocess.run([sevctl_bin, "session", bad_pdhf, "3"])
+    assert res.returncode != 0
