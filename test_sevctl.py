@@ -266,9 +266,6 @@ def test_sevctl_ok_ok(sevctl_bin, dev_sev_r, dev_sev_w):
     assert res.returncode == 0
 
 def test_sevctl_session_ok(sevctl_bin, dev_sev_r):
-    if not dev_sev_r:
-        pytest.skip("unable to open /dev/sev")
-
     pdhf = f"session-test-pdh.cert"
 
     res = subprocess.run([sevctl_bin, "session", pdhf, "3"])
