@@ -264,3 +264,13 @@ def test_sevctl_ok_ok(sevctl_bin, dev_sev_r, dev_sev_w):
 
     res = subprocess.run([sevctl_bin, "ok"])
     assert res.returncode == 0
+
+def test_sevctl_session_ok(sevctl_bin, dev_sev_r):
+    pdhf = f"session-test-pdh.cert"
+
+    res = subprocess.run([sevctl_bin, "session", pdhf, "3"])
+    assert res.returncode == 0
+
+    files = ["vm_godh.b64", "vm_session.b64", "vm_tek.bin", "vm_tik.bin"]
+    for f in files:
+        os.remove(f)
